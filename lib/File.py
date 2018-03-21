@@ -8,14 +8,34 @@ class File:
         self.number_of_geometric_properties = None
         self.number_of_bcnodes = None
         self.number_of_loads = None
-        self.coordinates = self.getCoordinates()
-        self.element_groups = self.getElement_groups()
-        self.incidences = self.getIncidences()
-        self.materials = self.getMaterials()
-        self.geometric_properties = self.getGeometric_properties()
-        self.bc_nodes = self.getBC_nodes()
-        self.loads = self.getLoads()
+        self.coordinates = self.getInfo("COORDINATES")
+        self.element_groups = self.getInfo("ELEMENT_GROUPS")
+        self.incidences = self.getIncidences() # todo: better function
+        self.materials = self.getInfo("MATERIALS")
+        self.geometric_properties = self.getInfo("GEOMETRIC_PROPERTIES")
+        self.bc_nodes = self.getInfo("BCNODES")
+        self.loads = self.getInfo("LOADS")
 
+
+    def getInfo(self, info):
+        
+        f = open(self.path, 'r')
+        line = f.readline()
+        while (("*" + info) not in line):
+            line = f.readline()
+        iterator = int(f.readline().split(' ')[0])
+        info_list = []
+        if(info == "ELEMENT_GROUPS"):
+            for i in range(iterator):
+                info_list.append([x for x in f.readline().split()])
+            for k in range(2):
+                print(info_list)
+                info_list[i][k] = int(info_list[i][k])
+
+        else:
+            for i in range(iterator):
+                info_list.append([float(x) for x in f.readline().split()])
+        return info_list
 
     def getCoordinates(self):
         f = open(self.path, 'r')
