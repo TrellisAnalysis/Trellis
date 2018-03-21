@@ -1,2 +1,2 @@
 # Trellis
-Software for trellis and structure analysis
+Software for structure analysis
