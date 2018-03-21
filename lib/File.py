@@ -26,6 +26,7 @@ class File:
         iterator = int(f.readline().split(' ')[0])
         info_list = []
         if(info == "ELEMENT_GROUPS"):
+            print("entrou")
             for i in range(iterator):
                 info_list.append([x for x in f.readline().split()])
             for k in range(2):
