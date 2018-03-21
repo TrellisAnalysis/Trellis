@@ -95,6 +95,3 @@ class File:
         for i in range(self.number_of_loads):
             loads.append([float(x) for x in f.readline().split()])
         return loads
-    
-x = File("in.txt")
-print(x.loads)
