@@ -1,24 +1,6 @@
 import math
 import random
 
-def toMatrix(l):
-    a = len(l)
-    try:
-        b = len(l[0])
-        result = Matrix(a, b)
-        for i in range (result.rows):
-            for j in range (result.cols):
-                result.data[i][j] = l[i][j]
-    except TypeError:
-        b = 1
-        result = Matrix(a, b)
-        for i in range (result.rows):
-            result.data[i][0] = l[i]
-    
-    return result
-
-        
-
 class Matrix:
     def __init__(self, rows, cols):
         self.rows = rows
@@ -35,7 +17,6 @@ class Matrix:
         for i in range (self.rows):
             for j in range (self.cols):
                 self.data[i][j] = random.uniform(-1,1)
-                # self.data[i][j] = random.randint(0,10)
     
     def console(self, complete = False):
         # Print Matrix data
@@ -46,6 +27,24 @@ class Matrix:
             for j in range(len(self.data[i])):
                 print(self.data[i][j], end=' ')
             print()
+    
+    @staticmethod
+    def convert(array):
+        # convert array to Matrix type
+        a = len(array)
+        try:
+            b = len(array[0])
+            result = Matrix(a, b)
+            for i in range (result.rows):
+                for j in range (result.cols):
+                    result.data[i][j] = array[i][j]
+        except TypeError:
+            b = 1
+            result = Matrix(a, b)
+            for i in range (result.rows):
+                result.data[i][0] = array[i]
+    
+        return result
     
     @staticmethod
     def transpose(a):
@@ -154,6 +153,17 @@ class Matrix:
             print("The number of columns and rows of A must be the same of B")
     
     @staticmethod
+    def inverse(self):
+        if(self.rows != self.cols):
+            print("The matrix should have the same numbers of rows and columns")
+            return None;
+        else:
+            if(self.rows == 2):
+                result = Matrix(2,2)
+                result.data = [[self.data[1][1], -self.data[0][1]], [-self.data[1][0], self.data[0][0]]]
+                return (self.s_multiply(result, 1/self.det()))
+    
+    @staticmethod
     def s_multiply(a,b):
         # If Matrix multiply matrix by matrix
         if isinstance(b, Matrix):
@@ -167,7 +177,7 @@ class Matrix:
                         result.data[i][j] = total
 
             else:
-                print("Can't multiply because number of columns is not the number of rows")
+                print("The matrix should have the same numbers of rows and columns")
                 return None
             
         else:
@@ -177,7 +187,13 @@ class Matrix:
                 for j in range (a.cols):
                     result.data[i][j] = a.data[i][j] * b
         return result
-
+    
+    def det(self):
+        if (self.cols == self.rows):
+            if(self.rows == 2):
+                # if matrix is 2x2
+                return (self.data[0][0] * self.data[1][1]) - (self.data[0][1] * self.data[1][0])
+            
     @staticmethod
     def toArray(a):
         arr = []
@@ -202,6 +218,18 @@ class Matrix:
         for i in range (self.rows):
             for j in range (self.cols):
                 self.data[i][j] = f(self.data[i][j])
+
+
+class Identity(Matrix):
+     def __init__(self, rows, cols):
+        Matrix.__init__(self, rows, cols)
+        for i in range (self.rows):
+            for j in range (self.cols):
+                if(i != j):
+                    self.data[i][j] = 0
+                else:
+                    self.data[i][j] = 1;            
+
             
 
 
