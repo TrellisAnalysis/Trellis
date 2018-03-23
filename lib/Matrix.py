@@ -29,7 +29,7 @@ class Matrix:
             print()
     
     @staticmethod
-    def convert(array):
+    def arrayToMatrix(array):
         # convert array to Matrix type
         a = len(array)
         try:
@@ -45,6 +45,15 @@ class Matrix:
                 result.data[i][0] = array[i]
     
         return result
+
+    @staticmethod
+    def listToMatrix(l, rows, cols):
+        # transform vectors to Matrix type
+        result = Matrix(rows, cols)
+        for i in range (rows):
+            for j in range (cols):
+                result.data[i][j] = l[i*j]
+        return result
     
     @staticmethod
     def transpose(a):
@@ -55,13 +64,7 @@ class Matrix:
                 transposed.data[j][i] = a.data[i][j]
         return transposed
 
-    @staticmethod
-    def s_toMatrix(l, rows, cols):
-        result = Matrix(rows, cols)
-        for i in range (rows):
-            for j in range (cols):
-                result.data[i][j] = l[i*j]
-        return result
+    
 
     @staticmethod
     def s_add(a, b):
@@ -195,6 +198,7 @@ class Matrix:
                 return (self.data[0][0] * self.data[1][1]) - (self.data[0][1] * self.data[1][0])
             
     @staticmethod
+    # convert Matrix to array type
     def toArray(a):
         arr = []
         for i in range (a.rows):

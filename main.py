@@ -19,7 +19,6 @@ from File import File
 # i = Matrix.inverse(b)
 # i.console()
 
-array = [[1,3],[1,2]]
 
 a = Matrix.convert(array)
 
