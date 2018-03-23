@@ -15,6 +15,7 @@ print(a.element_groups)
 
 list_of_elements = []
 for i in range (len(a.element_groups)):
+    element_id = a.element_groups[i][0]
     element = Element()
 
 # lists = [[4,7], [2,6]]
