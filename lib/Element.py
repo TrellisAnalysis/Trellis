@@ -3,7 +3,7 @@ sys.path.insert(0, './lib')
 from Matrix import *
 
 class Element:
-    def __init__(self, element_id, incidence, l, area, c, s, e):
+    def __init__(self, element_id, incidence, l, area, c, s, e, dof):
         self.element_id = element_id
         self.incidence = incidence
         self.lenght = l
@@ -12,6 +12,7 @@ class Element:
         self.sin = s
         self.e = e
         self.rigid = self.computeRigid()
+        self.dof = dof
         
     
     def console(self):
@@ -22,6 +23,7 @@ class Element:
         print("COS: {0}".format(self.cos))
         print("SIN: {0}".format(self.sin))
         print("E: {0}".format(self.e))
+        print("DOF: {0}".format(self.dof))
         print("RIGID:")
         self.rigid.console()
      

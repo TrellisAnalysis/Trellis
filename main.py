@@ -5,17 +5,10 @@ from Matrix import *
 from File import File
 from Element import Element
 
-
-
-
 def distance(ax, ay, bx, by):
     return( math.sqrt(pow(bx - ax, 2) + pow(by - ay, 2)))
 
-
-    
-
 a = File("in_test.txt")
-
 list_of_elements = []
 for i in range (len(a.element_groups)):
     element_id = i
@@ -31,7 +24,13 @@ for i in range (len(a.element_groups)):
     area = a.geometric_properties[i][0]
     cos = math.fabs(bx - ax)/l
     sin = math.fabs(by - ay)/l
-    element = Element(element_id, incidence, l, area, cos, sin, e)
+    dof = []
+    for j in range(len(a.bc_nodes)):
+        if(a.bc_nodes[j][0] in incidence):
+            dof.append(j+1) 
+       
+        
+    element = Element(element_id, incidence, l, area, cos, sin, e, dof)
     list_of_elements.append(element)
 
 
@@ -39,3 +38,5 @@ for i in range (len(a.element_groups)):
 # for j in range (len(list_of_elements)):
 #     list_of_elements[j].console()
 #     print("")
+
+
