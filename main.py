@@ -6,6 +6,8 @@ from File import File
 from Element import Element
 
 
+
+
 def distance(ax, ay, bx, by):
     return( math.sqrt(pow(bx - ax, 2) + pow(by - ay, 2)))
 
@@ -32,6 +34,8 @@ for i in range (len(a.element_groups)):
     element = Element(element_id, incidence, l, area, cos, sin, e)
     list_of_elements.append(element)
 
-for j in range (len(list_of_elements)):
-    list_of_elements[j].console()
-    print("")
+
+## print info
+# for j in range (len(list_of_elements)):
+#     list_of_elements[j].console()
+#     print("")

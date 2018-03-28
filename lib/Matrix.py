@@ -17,7 +17,7 @@ class Matrix:
         for i in range (self.rows):
             for j in range (self.cols):
                 self.data[i][j] = random.uniform(-1,1)
-    
+
     def console(self, complete = False):
         # Print Matrix data
         if (complete == True):
@@ -27,7 +27,7 @@ class Matrix:
             for j in range(len(self.data[i])):
                 print(self.data[i][j], end=' ')
             print()
-    
+
     @staticmethod
     def arrayToMatrix(array):
         # convert array to Matrix type
@@ -43,7 +43,7 @@ class Matrix:
             result = Matrix(a, b)
             for i in range (result.rows):
                 result.data[i][0] = array[i]
-    
+
         return result
 
     @staticmethod
@@ -54,7 +54,7 @@ class Matrix:
             for j in range (cols):
                 result.data[i][j] = l[i*j]
         return result
-    
+
     @staticmethod
     def transpose(a):
         # Transpose matrix
@@ -64,7 +64,7 @@ class Matrix:
                 transposed.data[j][i] = a.data[i][j]
         return transposed
 
-    
+
 
     @staticmethod
     def s_add(a, b):
@@ -73,11 +73,11 @@ class Matrix:
         if isinstance(b, Matrix):
             if a.rows == b.rows and a.cols == b.cols:
                 for i in range (a.rows):
-                    for j in range (a.cols):
+                    for j in    range (a.cols):
                         result.data[i][j] = a.data[i][j] + b.data[i][j]
             else:
                 print("The matrix should have the same numbers of rows and columns")
-                
+
         else:
             # If int add to all numbers of self.data
             for i in range (a.rows):
@@ -94,7 +94,7 @@ class Matrix:
                         self.data[i][j] += a.data[i][j]
             else:
                 print("The matrix should have the same numbers of rows and columns")
-                
+
         else:
             # If int add to all numbers of self.data
             for i in range (self.rows):
@@ -112,7 +112,7 @@ class Matrix:
                         result.data[i][j] = a.data[i][j] - b.data[i][j]
             else:
                 print("The matrix should have the same numbers of rows and columns")
-                
+
         else:
             # If int add to all numbers of self.data
             for i in range (a.rows):
@@ -129,13 +129,13 @@ class Matrix:
                         self.data[i][j] -= a.data[i][j]
             else:
                 print("The matrix should have the same numbers of rows and columns")
-                
+
         else:
             # If int add to all numbers of self.data
             for i in range (self.rows):
                 for j in range (self.cols):
                     self.data[i][j] -= a
-    
+
     @staticmethod
     def s_hadamard(a, b):
         if a.rows == b.rows and a.cols == b.cols:
@@ -154,7 +154,7 @@ class Matrix:
                     self.data[i][j] *= a.data[i][j]
         else:
             print("The number of columns and rows of A must be the same of B")
-    
+
     @staticmethod
     def inverse(self):
         if(self.rows != self.cols):
@@ -165,7 +165,7 @@ class Matrix:
                 result = Matrix(2,2)
                 result.data = [[self.data[1][1], -self.data[0][1]], [-self.data[1][0], self.data[0][0]]]
                 return (self.s_multiply(result, 1/self.det()))
-    
+
     @staticmethod
     def s_multiply(a,b):
         # If Matrix multiply matrix by matrix
@@ -182,7 +182,7 @@ class Matrix:
             else:
                 print("The matrix should have the same numbers of rows and columns")
                 return None
-            
+
         else:
             result = Matrix(a.rows, a.cols)
             # If int multiply to all numbers of self.data
@@ -190,13 +190,13 @@ class Matrix:
                 for j in range (a.cols):
                     result.data[i][j] = a.data[i][j] * b
         return result
-    
+
     def det(self):
         if (self.cols == self.rows):
             if(self.rows == 2):
                 # if matrix is 2x2
                 return (self.data[0][0] * self.data[1][1]) - (self.data[0][1] * self.data[1][0])
-            
+
     @staticmethod
     # convert Matrix to array type
     def toArray(a):
@@ -232,8 +232,8 @@ class Identity(Matrix):
                 if(i != j):
                     self.data[i][j] = 0
                 else:
-                    self.data[i][j] = 1;            
+                    self.data[i][j] = 1;
 
-            
+
 
 
