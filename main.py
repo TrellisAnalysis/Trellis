@@ -4,7 +4,7 @@ sys.path.insert(0, './lib')
 from Matrix import *
 from File import File
 from Element import Element
-#top
+
 def distance(ax, ay, bx, by):
     return( math.sqrt(pow(bx - ax, 2) + pow(by - ay, 2)))
 
@@ -35,8 +35,8 @@ for i in range (len(a.element_groups)):
 
 
 ## print info
-# for j in range (len(list_of_elements)):
-#     list_of_elements[j].console()
-#     print("")
+for j in range (len(list_of_elements)):
+    list_of_elements[j].console()
+    print("")
 
 
