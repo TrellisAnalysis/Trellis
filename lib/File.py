@@ -1,16 +1,14 @@
-class File:
-
+class FileIn:
     def __init__(self, path):
         self.path = path
         self.number_of_element_groups = None
         self.coordinates = self.getInfo("COORDINATES")
         self.element_groups = self.getElement_groups()
-        self.incidences = self.getIncidences() # todo: better function
+        self.incidences = self.getIncidences()  # todo: better function
         self.materials = self.getInfo("MATERIALS")
         self.geometric_properties = self.getInfo("GEOMETRIC_PROPERTIES")
         self.bc_nodes = self.getInfo("BCNODES")
         self.loads = self.getInfo("LOADS")
-
 
     def getInfo(self, info):
         f = open(self.path, 'r')
@@ -19,14 +17,14 @@ class File:
             line = f.readline()
         iterator = int(f.readline().split(' ')[0])
         info_list = []
-        if(info == "ELEMENT_GROUPS"):
+        if (info == "ELEMENT_GROUPS"):
             for i in range(iterator):
                 info_list.append([x for x in f.readline().split()])
             for k in range(2):
                 print(info_list)
                 info_list[i][k] = int(info_list[i][k])
 
-        else: 
+        else:
             for i in range(iterator):
                 info_list.append([float(x) for x in f.readline().split()])
         return info_list
@@ -44,7 +42,6 @@ class File:
                 element_groups[i][k] = int(element_groups[i][k])
         return element_groups
 
-
     def getIncidences(self):
         f = open(self.path, 'r')
         linha = f.readline()
@@ -54,3 +51,19 @@ class File:
         for i in range(self.number_of_element_groups):
             incidences.append([int(x) for x in f.readline().split()])
         return incidences
+
+class FileOut:
+    def __init__(self, file_name):
+        self.file_name = file_name
+        self.displacements = 0
+        self.reaction_forces = 0
+        self.element_strains = 0
+        self.element_stresses = 0
+    
+    def writeOutputFile(self):
+        file = open(self.file_name, "w")
+
+        file.write("*DISPLACEMENTS\n")
+        file.write("\n*REACTION_FORCES\n")
+        file.write("\n*ELEMENT_STRAINS\n")
+        file.write("\n*ELEMENT_STRESSES\n")

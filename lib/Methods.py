@@ -16,7 +16,6 @@ def Jacobi(it, tolerance, a, f):
                 error = 1
             else:
                 error = (sub - try_vector.data[i][0])/sub
-            print(error)
             if(error < tol):
                 tol +=1
         if(tol == f.rows):
@@ -33,8 +32,9 @@ list_a = [[3, -1, 0, 0],
           [0, -2, 1, 3]]
 a = Matrix.arrayToMatrix(list_a)
 a = Matrix.s_multiply(a, 1/2*10e-5)
+a.console()
 list_f = [[0],[0], [0], [-1000]]
 f = Matrix.arrayToMatrix(list_f) 
 m, error, iterations = Jacobi(it, tolerance, a, f)
-# m.console()
+m.console()
 # print(iterations)
