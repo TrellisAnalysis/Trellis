@@ -32,7 +32,6 @@ list_a = [[3, -1, 0, 0],
           [0, -2, 1, 3]]
 a = Matrix.arrayToMatrix(list_a)
 a = Matrix.s_multiply(a, 1/2*10e-5)
-a.console()
 list_f = [[0],[0], [0], [-1000]]
 f = Matrix.arrayToMatrix(list_f) 
 m, error, iterations = Jacobi(it, tolerance, a, f)
