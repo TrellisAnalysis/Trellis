@@ -5,11 +5,13 @@ from Matrix import *
 from File import FileIn, FileOut
 from Element import Element
 
-<<<<<<< HEAD
+def roundm(x):
+    return round(x,3)
+
 def distance(ax, ay, bx, by):
     return( math.sqrt(pow(bx - ax, 2) + pow(by - ay, 2)))
 
-a = File("in_test.txt")
+a = FileIn("in_test.txt")
 list_of_elements = []
 for i in range (len(a.element_groups)):
     element_id = i
@@ -18,93 +20,47 @@ for i in range (len(a.element_groups)):
     ay = a.coordinates[incidence[0] - 1][2]
     bx = a.coordinates[incidence[1] - 1][1]
     by = a.coordinates[incidence[1] - 1][2]
-    # print("ax: " + str(ax) + " ay: " + str(ay) + " bx: " + str(bx) + " by: " + str(by))
     l = distance(ax, ay, bx, by)
     # print(l)
     e = a.materials[i][0]
     area = a.geometric_properties[i][0]
     cos = math.fabs(bx - ax)/l
     sin = math.fabs(by - ay)/l
-    dof = []
+    restrictions_dof = []
     for j in range(len(a.bc_nodes)):
         if(a.bc_nodes[j][0] in incidence):
-            dof.append(j+1) 
+            restrictions_dof.append(j+1) 
        
         
-    element = Element(element_id, incidence, l, area, cos, sin, e, dof)
+    element = Element(element_id, incidence, l, area, cos, sin, e, restrictions_dof)
     list_of_elements.append(element)
 
 
-## print info
-for j in range (len(list_of_elements)):
-    list_of_elements[j].console()
+# for j in range (len(list_of_elements)):
+#     list_of_elements[j].console()
+#     print("")
+
+
+nodes = len(a.coordinates)
+m_global = Matrix(2*nodes, 2*nodes)
+for k in range(len(list_of_elements)):
+    element = list_of_elements[k]
+    dof = []
+    for l in range(len(element.incidence)):
+        incidence = element.incidence[l]
+        dof.append((incidence*2)-1)
+        dof.append(incidence*2)
+    # print(dof)
+    element.rigid.map(roundm)
+    element.rigid.console()
     print("")
-=======
+    for m in range(element.rigid.rows):
+        for n in range(element.rigid.cols):
+            m_global.data[dof[m]-1][dof[n]-1] += element.rigid.data[m][n]
+            # m_global.data[dof[m]-1][dof[n]-1] += 1
+m_global.map(roundm)
+m_global.console()      
+        
 
-#top
-def distance(ax, ay, bx, by):
-    return (math.sqrt(pow(bx - ax, 2) + pow(by - ay, 2)))
-
-
-def load_file(inputfile):
-    a = FileIn(inputfile)
-    list_of_elements = []
-    for i in range(len(a.element_groups)):
-        element_id = i
-        incidence = [a.incidences[i][1], a.incidences[i][2]]
-        ax = a.coordinates[incidence[0] - 1][1]
-        ay = a.coordinates[incidence[0] - 1][2]
-        bx = a.coordinates[incidence[1] - 1][1]
-        by = a.coordinates[incidence[1] - 1][2]
-        # print("ax: " + str(ax) + " ay: " + str(ay) + " bx: " + str(bx) + " by: " + str(by))
-        l = distance(ax, ay, bx, by)
-        # print(l)
-        e = a.materials[i][0]
-        area = a.geometric_properties[i][0]
-        cos = math.fabs(bx - ax) / l
-        sin = math.fabs(by - ay) / l
-        dof = []
-        for j in range(len(a.bc_nodes)):
-            if (a.bc_nodes[j][0] in incidence):
-                dof.append(j + 1)
-
-        element = Element(element_id, incidence, l, area, cos, sin, e, dof)
-        list_of_elements.append(element)
-
-    ## print info
-    # for j in range (len(list_of_elements)):
-        #     list_of_elements[j].console()
-        #     print("")
-
-
-def main(argv):
-    inputfile = ''
-    outputfile = ''
-    try:
-        opts, args = getopt.getopt(argv, "hi:o:", ["ifile=", "ofile="])
-    except getopt.GetoptError:
-        print('Usage is: test.py -i <inputfile> -o <outputfile> or test.py -h for help')
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt == '-h':
-            print('test.py -i <inputfile> -o <outputfile>')
-            sys.exit()
-        elif opt in ("-i", "--ifile"):
-            inputfile = arg
-        elif opt in ("-o", "--ofile"):
-            outputfile = arg
-        else:
-            print('An error ocurred, type "test.py -h for help"')
-            sys.exit()
-
-    print('Input file is:', inputfile)
-    print('Output file is:', outputfile)
-
-    load_file(inputfile)
->>>>>>> 7d7fc74920401200b3ac4de669ceb676d3d56a67
-
-    output = FileOut(outputfile)
-    output.writeOutputFile()
-
-if __name__ == "__main__":
-    main(sys.argv[1:])
+# if __name__ == "__main__":
+#     main(sys.argv[1:])

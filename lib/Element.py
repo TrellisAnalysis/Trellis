@@ -4,7 +4,7 @@ from Matrix import *
 
 
 class Element:
-    def __init__(self, element_id, incidence, l, area, c, s, e, dof):
+    def __init__(self, element_id, incidence, l, area, c, s, e, restrictions_dof):
         self.element_id = element_id
         self.incidence = incidence
         self.length = l
@@ -13,7 +13,7 @@ class Element:
         self.sin = s
         self.e = e
         self.rigid = self.computeRigid()
-        self.dof = dof
+        self.restrictions_dof = restrictions_dof
 
     def console(self):
         print("ELEMENT_ID: {0}".format(self.element_id))
@@ -23,7 +23,7 @@ class Element:
         print("COS: {0}".format(self.cos))
         print("SIN: {0}".format(self.sin))
         print("E: {0}".format(self.e))
-        print("DOF: {0}".format(self.dof))
+        print("restrictions_dof: {0}".format(self.restrictions_dof))
         print("RIGID:")
         self.rigid.console()
 
