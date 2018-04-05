@@ -50,10 +50,12 @@ class Matrix:
     @staticmethod
     def listToMatrix(l, rows, cols):
         # transform vectors to Matrix type
+        k = 0
         result = Matrix(rows, cols)
         for i in range(rows):
             for j in range(cols):
-                result.data[i][j] = l[i * j]
+                result.data[i][j] = l[k]
+                k+=1
         return result
 
     @staticmethod

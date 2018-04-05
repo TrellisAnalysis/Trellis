@@ -18,22 +18,22 @@ def Jacobi(it, tolerance, a, f):
                 error = (sub - try_vector.data[i][0])/sub
             if(error < tol):
                 tol +=1
-        if(tol == f.rows):
-            break
+        # if(tol == f.rows):
+        #     break
         for k in range (try_vector.rows):
             try_vector.data[k][0] = try_vector2.data[k][0]
     return try_vector2, error, iterations
 
-it = 600
-tolerance = 0.0001
-list_a = [[3, -1, 0, 0],
-          [-1, 3, 0, -2],
-          [0, 0, 3, 1],
-          [0, -2, 1, 3]]
-a = Matrix.arrayToMatrix(list_a)
-a = Matrix.s_multiply(a, 1/2*10e-5)
-list_f = [[0],[0], [0], [-1000]]
-f = Matrix.arrayToMatrix(list_f) 
-m, error, iterations = Jacobi(it, tolerance, a, f)
-m.console()
+# it = 600
+# tolerance = 0.0001
+# list_a = [[3, -1, 0, 0],
+#           [-1, 3, 0, -2],
+#           [0, 0, 3, 1],
+#           [0, -2, 1, 3]]
+# a = Matrix.arrayToMatrix(list_a)
+# a = Matrix.s_multiply(a, 1/2*10e-5)
+# list_f = [[0],[0], [0], [-1000]]
+# f = Matrix.arrayToMatrix(list_f) 
+# m, error, iterations = Jacobi(it, tolerance, a, f)
+# m.console()
 # print(iterations)
