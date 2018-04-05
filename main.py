@@ -102,8 +102,8 @@ for s in range (len(vv)):
         vv[s] = r.data[k][0]
         k+=1
         
-# m_dis = Matrix.listToMatrix(vv, nodes, 2)
-# m_dis.console()
+m_dis = Matrix.listToMatrix(vv, nodes, 2)
+m_dis.console()
 tension_list = []
 for i in range(len(list_of_elements)):
     element = list_of_elements[i]
