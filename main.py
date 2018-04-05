@@ -21,63 +21,62 @@ def load_truss(inputfile):
         ay = truss.coordinates[incidence[0] - 1][2]
         bx = truss.coordinates[incidence[1] - 1][1]
         by = truss.coordinates[incidence[1] - 1][2]
-        l = distance(ax, ay, bx, by)
-        # print(l)
+        length = distance(ax, ay, bx, by)
         e = truss.materials[i][0]
         area = truss.geometric_properties[i][0]
-        cos = math.fabs(bx - ax) / l
-        sin = math.fabs(by - ay) / l
+        cos = math.fabs(bx - ax) / length
+        sin = math.fabs(by - ay) / length
         restrictions_dof = []
         for j in range(len(truss.bc_nodes)):
             if(truss.bc_nodes[j][0] in incidence):
                 restrictions_dof.append(j+1) 
        
-        element = Element(element_id, incidence, l, area, cos, sin, e, restrictions_dof)
+        element = Element(element_id, incidence, length, area, cos, sin, e, restrictions_dof)
         list_of_elements.append(element)
 
     return truss, list_of_elements
 
 def computeGlobalRigid(truss, list_of_elements):
     nodes = len(truss.coordinates)
-    m_global = Matrix(2*nodes, 2*nodes)
+    global_rigid_matrix = Matrix(2*nodes, 2*nodes)
     for i in range(len(list_of_elements)):
         element = list_of_elements[i]
         dof = []
-        for l in range(len(element.incidence)):
-            incidence = element.incidence[l]
+        for length in range(len(element.incidence)):
+            incidence = element.incidence[length]
             dof.append((incidence*2)-1)
             dof.append(incidence*2)
         # print(dof)
         for j in range(element.rigid.rows):
             for k in range(element.rigid.cols):
-                m_global.data[dof[j]-1][dof[k]-1] += element.rigid.data[j][k]
-    return m_global
+                global_rigid_matrix.data[dof[j]-1][dof[k]-1] += element.rigid.data[j][k]
+    return global_rigid_matrix
 
 def computeRestrictedDofs(truss):
     # print(a.bc_nodes)
-    dof_k = []
+    restricted_dofs = []
     for i in range(len(truss.bc_nodes)):
         first = truss.bc_nodes[i][0]
         second = truss.bc_nodes[i][1]
         r = first*2
         if (second == 1):
             r-=1
-        dof_k.append(r)
+        restricted_dofs.append(r)
 
-    # print(dof_k)
-    return dof_k
+    # print(restricted_dofs)
+    return restricted_dofs
 
-def computeCleanGlobalRigid(m_global, dof_k):
+def computeCleanGlobalRigid(global_rigid_matrix, restricted_dofs):
     vector = []
-    for i in range(m_global.rows):
-        for j in range(m_global.cols):
-            if(((i+1) not in dof_k) and ((j+1) not in dof_k)):
-                vector.append(m_global.data[i][j])
+    for i in range(global_rigid_matrix.rows):
+        for j in range(global_rigid_matrix.cols):
+            if(((i+1) not in restricted_dofs) and ((j+1) not in restricted_dofs)):
+                vector.append(global_rigid_matrix.data[i][j])
 
-    gg = Matrix.listToMatrix(vector,m_global.rows-len(dof_k), m_global.rows-len(dof_k))
-    return gg
+    clean_rigid_matrix = Matrix.listToMatrix(vector,global_rigid_matrix.rows-len(restricted_dofs), global_rigid_matrix.rows-len(restricted_dofs))
+    return clean_rigid_matrix
 
-def computeLoadMatrix(truss, gg, dof_k):
+def computeLoadMatrix(truss, clean_rigid_matrix, restricted_dofs):
     nodes = len(truss.coordinates)
     loadsr = [0] * 2 * nodes
     for i in range(len(truss.loads)):
@@ -90,29 +89,29 @@ def computeLoadMatrix(truss, gg, dof_k):
 
 
     loadsr_finale = []
-    for y in range(len(loadsr)):
-        if (y+1) not in dof_k:
-            loadsr_finale.append(loadsr[y])
+    for j in range(len(loadsr)):
+        if (j+1) not in restricted_dofs:
+            loadsr_finale.append(loadsr[j])
     list_loads = []
 
 
-    for i in range(len(loadsr_finale)):
-        list_loads.append([loadsr_finale[i]])
+    for k in range(len(loadsr_finale)):
+        list_loads.append([loadsr_finale[k]])
 
     list_loads = Matrix.arrayToMatrix(list_loads)
-    r, error, iterations = Jacobi(100, 0.0001, gg, list_loads)
+    r, error, iterations = Jacobi(100, 0.0001, clean_rigid_matrix, list_loads)
 
     l_finale = []
 
     vv = [0] * nodes * 2
     k = 0
-    for s in range (len(vv)):
-        if((s+1) not in dof_k):
-            vv[s] = r.data[k][0]
+    for l in range (len(vv)):
+        if((l+1) not in restricted_dofs):
+            vv[l] = r.data[k][0]
             k+=1
             
-    m_dis = Matrix.listToMatrix(vv, nodes, 2)
-    return m_dis
+    displacement_matrix = Matrix.listToMatrix(vv, nodes, 2)
+    return displacement_matrix
 
 
 def main(argv):
@@ -140,11 +139,11 @@ def main(argv):
     print('')
 
     truss, list_of_elements = load_truss(inputfile)
-    m_global = computeGlobalRigid(truss, list_of_elements)
-    dof_k = computeRestrictedDofs(truss)
-    gg = computeCleanGlobalRigid(m_global, dof_k)
-    m_dis = computeLoadMatrix(truss, gg, dof_k)
-    m_dis.console()
+    global_rigid_matrix = computeGlobalRigid(truss, list_of_elements)
+    restricted_dofs = computeRestrictedDofs(truss)
+    clean_rigid_matrix = computeCleanGlobalRigid(global_rigid_matrix, restricted_dofs)
+    displacement_matrix = computeLoadMatrix(truss, clean_rigid_matrix, restricted_dofs)
+    displacement_matrix.console()
     print('')
 
     output = FileOut(outputfile)
