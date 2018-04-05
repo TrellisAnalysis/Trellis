@@ -7,7 +7,10 @@ from Element import Element
 from Methods import Jacobi
 
 def distance(ax, ay, bx, by):
-    return( math.sqrt(pow(bx - ax, 2) + pow(by - ay, 2)))
+    return (math.sqrt(pow(bx - ax, 2) + pow(by - ay, 2)))
+
+def distance2(a, b):
+    return (math.sqrt(pow(a, 2) + pow(b, 2)))
 
 def load_truss(inputfile):
     truss = FileIn(inputfile)
@@ -87,7 +90,7 @@ def computeLoadMatrix(truss, clean_rigid_matrix, restricted_dofs):
             r-=1
         loadsr[int(r)-1]  = truss.loads[i][2]   
 
-
+    
     loadsr_finale = []
     for j in range(len(loadsr)):
         if (j+1) not in restricted_dofs:
@@ -112,6 +115,35 @@ def computeLoadMatrix(truss, clean_rigid_matrix, restricted_dofs):
             
     displacement_matrix = Matrix.listToMatrix(vv, len(vv), 1)
     return displacement_matrix
+
+def computeStressesStrains(list_of_elements, displacement_matrix):
+    list_stress = []
+    list_strain = []
+    for i in range(len(list_of_elements)):
+        dof = []
+        element = list_of_elements[i]
+        for length in range(len(element.incidence)):
+            incidence = element.incidence[length]
+            dof.append((incidence*2)-1)
+            dof.append(incidence*2)
+
+        current_displacement = []
+        for j in range(len(displacement_matrix.data)):
+            if j+1 in dof:
+                current_displacement.append(displacement_matrix.data[j][0])
+        current_displacement = Matrix.listToMatrix(current_displacement, len(current_displacement), 1)
+
+        m_result = Matrix.s_multiply(element.m,(1/element.length))
+        m_result = Matrix.s_multiply(m_result,current_displacement)
+        strain = distance2(m_result.data[0][0],m_result.data[1][0])
+        # m_result.console(True)
+        stress = strain * element.e
+        # print(strain)
+        list_stress.append(stress)
+        list_strain.append(strain)
+    print(list_strain)
+    print(list_stress)
+    return list_stress, list_strain
 
 
 def main(argv):
@@ -143,7 +175,8 @@ def main(argv):
     restricted_dofs = computeRestrictedDofs(truss)
     clean_rigid_matrix = computeCleanGlobalRigid(global_rigid_matrix, restricted_dofs)
     displacement_matrix = computeLoadMatrix(truss, clean_rigid_matrix, restricted_dofs)
-    displacement_matrix.console()
+    # displacement_matrix.console()
+    stresses, strains = computeStressesStrains(list_of_elements, displacement_matrix)
     print('')
 
     output = FileOut(outputfile)
