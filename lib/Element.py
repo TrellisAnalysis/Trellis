@@ -12,6 +12,7 @@ class Element:
         self.cos = c
         self.sin = s
         self.e = e
+        self.m = None
         self.rigid = self.computeRigid()
         self.restrictions_dof = restrictions_dof
 
@@ -35,6 +36,7 @@ class Element:
                   [-(c**2), -(c*s), c**2, c*s],
                   [-(c*s), -(s**2), c*s, s**2]]
         m = Matrix.arrayToMatrix(matrix)
+        self.m = m
         return Matrix.s_multiply(m, (self.e * self.area) / self.length)
     
     
