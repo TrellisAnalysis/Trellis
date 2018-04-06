@@ -53,17 +53,33 @@ class FileIn:
         return incidences
 
 class FileOut:
-    def __init__(self, file_name):
+    def __init__(self, file_name, truss, displacements, reaction_forces, strains, stresses):
         self.file_name = file_name
-        self.displacements = 0
-        self.reaction_forces = 0
-        self.element_strains = 0
-        self.element_stresses = 0
+        self.truss = truss
+        self.displacements = displacements
+        self.reaction_forces = reaction_forces
+        self.element_strains = strains
+        self.element_stresses = stresses
     
     def writeOutputFile(self):
         file = open(self.file_name, "w")
 
+        number_of_nodes = len(self.truss.incidences)
+
         file.write("*DISPLACEMENTS\n")
+        k = 0
+        for node in range(number_of_nodes):
+            file.write("{0} {1} {2} {3}\n".format(node + 1, self.displacements[k], self.displacements[k + 1], 0))
+            k+=2
+        
         file.write("\n*REACTION_FORCES\n")
+        for node in range(number_of_nodes):
+            file.write("{0} {1}\n".format(node + 1, self.reaction_forces))
+        
         file.write("\n*ELEMENT_STRAINS\n")
+        for node in range(number_of_nodes):
+            file.write("{0} {1}\n".format(node + 1, self.element_strains[node]))
+
         file.write("\n*ELEMENT_STRESSES\n")
+        for node in range(number_of_nodes):
+            file.write("{0} {1}\n".format(node + 1, self.element_stresses[node]))

@@ -135,14 +135,12 @@ def computeStressesStrains(list_of_elements, displacement_matrix):
 
         m_result = Matrix.s_multiply(element.m,(1/element.length))
         m_result = Matrix.s_multiply(m_result,current_displacement)
-        strain = distance2(m_result.data[0][0],m_result.data[1][0])
+        stress = distance2(m_result.data[0][0],m_result.data[1][0])
         # m_result.console(True)
-        stress = strain * element.e
+        strain = stress * element.e
         # print(strain)
-        list_stress.append(stress)
         list_strain.append(strain)
-    print(list_strain)
-    print(list_stress)
+        list_stress.append(stress)
     return list_stress, list_strain
 
 
@@ -176,10 +174,10 @@ def main(argv):
     clean_rigid_matrix = computeCleanGlobalRigid(global_rigid_matrix, restricted_dofs)
     displacement_matrix = computeLoadMatrix(truss, clean_rigid_matrix, restricted_dofs)
     # displacement_matrix.console()
+    reaction_forces = 0
     stresses, strains = computeStressesStrains(list_of_elements, displacement_matrix)
-    print('')
 
-    output = FileOut(outputfile)
+    output = FileOut(outputfile, truss, Matrix.toArray(displacement_matrix), reaction_forces, stresses, strains)
     output.writeOutputFile()
 
 if __name__ == "__main__":
