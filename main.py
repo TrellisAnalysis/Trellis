@@ -189,9 +189,7 @@ def main(argv):
         opts, args = getopt.getopt(argv, "hi:o:m:n:", ["ifile=", "ofile=", "method=", "iterations="])
     except getopt.GetoptError:
         print('Usage is: main.py -i <inputfile> -o <outputfile> -m <method> -n <number of iterations> or test.py -h for help')
-        method = 'Gauss-Seidel'
-        # iterations = 500
-        # sys.exit(2)
+        sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
             print('main.py -i <inputfile> -o <outputfile> -m <method> -n <number of iterations>')
@@ -225,7 +223,7 @@ def main(argv):
 
     output = FileOut(outputfile, truss, Matrix.toArray(displacement_matrix), reaction_forces, vector_names, stresses, strains)
     output.writeOutputFile()
-    print('Number of iterations: {0}'. format(iterations))
+    print('Number of iterations: {0}'. format(iterations + 1))
     print('')
 
 
