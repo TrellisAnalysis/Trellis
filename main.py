@@ -173,7 +173,7 @@ def main(argv):
     restricted_dofs = computeRestrictedDofs(truss)
     clean_rigid_matrix = computeCleanGlobalRigid(global_rigid_matrix, restricted_dofs)
     displacement_matrix = computeLoadMatrix(truss, clean_rigid_matrix, restricted_dofs)
-    # displacement_matrix.console()
+    displacement_matrix.console()
     reaction_forces = 0
     stresses, strains = computeStressesStrains(list_of_elements, displacement_matrix)
 
