@@ -50,9 +50,12 @@ def computeGlobalRigid(truss, list_of_elements):
             dof.append((incidence*2)-1)
             dof.append(incidence*2)
         # print(dof)
+        
         for j in range(element.rigid.rows):
             for k in range(element.rigid.cols):
                 global_rigid_matrix.data[dof[j]-1][dof[k]-1] += element.rigid.data[j][k]
+    # res = Matrix.s_multiply(global_rigid_matrix,)
+
     return global_rigid_matrix
 
 def computeRestrictedDofs(truss):
@@ -66,7 +69,6 @@ def computeRestrictedDofs(truss):
             r-=1
         restricted_dofs.append(r)
 
-    # print(restricted_dofs)
     return restricted_dofs
 
 def computeCleanGlobalRigid(global_rigid_matrix, restricted_dofs):
@@ -132,16 +134,17 @@ def computeStressesStrains(list_of_elements, displacement_matrix):
             if j+1 in dof:
                 current_displacement.append(displacement_matrix.data[j][0])
         current_displacement = Matrix.listToMatrix(current_displacement, len(current_displacement), 1)
-
-        m_result = Matrix.s_multiply(element.m,(1/element.length))
+        
+        m_result = Matrix.s_multiply(element.transformation_matrix,(1/element.length))
         m_result = Matrix.s_multiply(m_result,current_displacement)
-        stress = distance2(m_result.data[0][0],m_result.data[1][0])
-        # m_result.console(True)
+        stress = m_result.data[0][0]
         strain = stress * element.e
-        # print(strain)
         list_strain.append(strain)
         list_stress.append(stress)
     return list_stress, list_strain
+
+# def computeReactionForces(clean_rigid_matrix, displacement_matrix):
+        
 
 
 def main(argv):
@@ -173,12 +176,16 @@ def main(argv):
     restricted_dofs = computeRestrictedDofs(truss)
     clean_rigid_matrix = computeCleanGlobalRigid(global_rigid_matrix, restricted_dofs)
     displacement_matrix = computeLoadMatrix(truss, clean_rigid_matrix, restricted_dofs)
-    displacement_matrix.console()
+    res = Matrix.s_multiply(global_rigid_matrix,displacement_matrix)
+    # res.console()
+    # displacement_matrix.console()
+    # reaction_forces = computeReactionForces()
     reaction_forces = 0
     stresses, strains = computeStressesStrains(list_of_elements, displacement_matrix)
 
     output = FileOut(outputfile, truss, Matrix.toArray(displacement_matrix), reaction_forces, stresses, strains)
     output.writeOutputFile()
+    
 
 if __name__ == "__main__":
     main(sys.argv[1:])
