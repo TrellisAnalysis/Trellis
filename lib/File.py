@@ -73,8 +73,10 @@ class FileOut:
             k+=2
         
         file.write("\n*REACTION_FORCES\n")
-        for node in range(number_of_nodes):
-            file.write("{0} {1}\n".format(node + 1, self.reaction_forces))
+        for i in range(number_of_nodes):
+            file.write("{0} \n".format(self.reaction_forces[i]))
+        # for node in range(number_of_nodes):
+        #     file.write("{0} {1}\n".format(node + 1, self.reaction_forces))
         
         file.write("\n*ELEMENT_STRAINS\n")
         for node in range(number_of_nodes):
