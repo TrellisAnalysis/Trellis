@@ -43,8 +43,8 @@ class Element:
     def computeTransformationMatrix(self):
         c = self.cos
         s = self.sin
-        # t = [[-c, -s, c, s]] essa eh a certa kkkj
-        t = [[c, s, -c, -s]]
+        t = [[-c, -s, c, s]] #essa eh a certa kkkj
+        # t = [[c, s, -c, -s]]
         return Matrix.arrayToMatrix(t)
         
     
