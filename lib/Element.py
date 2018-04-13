@@ -15,6 +15,7 @@ class Element:
         self.m = None
         self.rigid = self.computeRigid()
         self.restrictions_dof = restrictions_dof
+        self.transformation_matrix = self.computeTransformationMatrix()
 
     def console(self):
         print("ELEMENT_ID: {0}".format(self.element_id))
@@ -39,4 +40,11 @@ class Element:
         self.m = m
         return Matrix.s_multiply(m, (self.e * self.area) / self.length)
     
+    def computeTransformationMatrix(self):
+        c = self.cos
+        s = self.sin
+        # t = [[-c, -s, c, s]] essa eh a certa kkkj
+        t = [[c, s, -c, -s]]
+        return Matrix.arrayToMatrix(t)
+        
     
