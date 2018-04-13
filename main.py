@@ -143,7 +143,16 @@ def computeStressesStrains(list_of_elements, displacement_matrix):
         list_stress.append(stress)
     return list_stress, list_strain
 
-# def computeReactionForces(clean_rigid_matrix, displacement_matrix):
+def computeReactionForces(m_global, displacement_matrix, loads):
+    loads = len(loads)
+    forces_vector = Matrix.s_multiply(m_global, displacement_matrix)
+    reaction_forces = []
+    # forces_vector.console()
+    for i in range(forces_vector.rows):
+        if i not in range(loads):
+            reaction_forces.append(forces_vector.data[i][0])
+    return reaction_forces
+    
         
 
 
@@ -179,8 +188,8 @@ def main(argv):
     res = Matrix.s_multiply(global_rigid_matrix,displacement_matrix)
     # res.console()
     # displacement_matrix.console()
-    # reaction_forces = computeReactionForces()
-    reaction_forces = 0
+    reaction_forces = computeReactionForces(global_rigid_matrix, displacement_matrix, truss.loads)
+    # reaction_forces = 0
     stresses, strains = computeStressesStrains(list_of_elements, displacement_matrix)
 
     output = FileOut(outputfile, truss, Matrix.toArray(displacement_matrix), reaction_forces, stresses, strains)
