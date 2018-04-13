@@ -4,7 +4,7 @@ sys.path.insert(0, './lib')
 from Matrix import *
 from File import FileIn, FileOut
 from Element import Element
-from Methods import Jacobi
+from Methods import Jacobi, GaussSeidel
 
 
 def round2(x):
@@ -85,7 +85,7 @@ def computeCleanGlobalRigid(global_rigid_matrix, restricted_dofs):
     clean_rigid_matrix = Matrix.listToMatrix(vector,global_rigid_matrix.rows-len(restricted_dofs), global_rigid_matrix.rows-len(restricted_dofs))
     return clean_rigid_matrix
 
-def computeLoadMatrix(truss, clean_rigid_matrix, restricted_dofs):
+def computeLoadMatrix(truss, clean_rigid_matrix, restricted_dofs, method, max_iterations):
     nodes = len(truss.coordinates)
     global_load_vector = [0] * 2 * nodes
     for i in range(len(truss.loads)):
@@ -106,7 +106,10 @@ def computeLoadMatrix(truss, clean_rigid_matrix, restricted_dofs):
         list_loads.append([load_vector[k]])
 
     list_loads = Matrix.arrayToMatrix(list_loads)
-    result, error, iterations = Jacobi(600, 0.00000001, clean_rigid_matrix, list_loads)
+    if(method != 'Gauss-Seidel'):
+        result, error, iterations = Jacobi(max_iterations, 0.00000001, clean_rigid_matrix, list_loads)
+    else:
+        result, error, iterations = GaussSeidel(max_iterations, 0.00000001, clean_rigid_matrix, list_loads)
     
     displacements_vector = [0] * nodes * 2
     k = 0
@@ -116,7 +119,7 @@ def computeLoadMatrix(truss, clean_rigid_matrix, restricted_dofs):
             k+=1
             
     displacement_matrix = Matrix.listToMatrix(displacements_vector, len(displacements_vector), 1)
-    return displacement_matrix
+    return displacement_matrix, iterations
 
 def computeStressesStrains(list_of_elements, displacement_matrix):
     list_stress = []
@@ -180,32 +183,40 @@ def computeReactionForces(m_global, displacement_matrix, loads, number_of_nodes)
 def main(argv):
     inputfile = ''
     outputfile = ''
+    method = 'Gauss-Seidel'
+    iterations = 500
     try:
-        opts, args = getopt.getopt(argv, "hi:o:", ["ifile=", "ofile="])
+        opts, args = getopt.getopt(argv, "hi:o:m:n:", ["ifile=", "ofile=", "method=", "iterations="])
     except getopt.GetoptError:
-        print('Usage is: test.py -i <inputfile> -o <outputfile> or test.py -h for help')
-        sys.exit(2)
+        print('Usage is: main.py -i <inputfile> -o <outputfile> -m <method> -n <number of iterations> or test.py -h for help')
+        method = 'Gauss-Seidel'
+        # iterations = 500
+        # sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('test.py -i <inputfile> -o <outputfile>')
+            print('main.py -i <inputfile> -o <outputfile> -m <method> -n <number of iterations>')
             sys.exit()
         elif opt in ("-i", "--ifile"):
             inputfile = arg
         elif opt in ("-o", "--ofile"):
             outputfile = arg
+        elif opt in ("-m", "--method"):
+            method = arg
+        elif opt in ("-n", "--iterations"):
+            iterations = arg
         else:
             print('An error ocurred, type "test.py -h for help"')
             sys.exit()
 
     print('Input file is:', inputfile)
     print('Output file is:', outputfile)
-    print('')
+    print("Using {0} method". format(method))
 
     truss, list_of_elements = load_truss(inputfile)
     global_rigid_matrix = computeGlobalRigid(truss, list_of_elements)
     restricted_dofs = computeRestrictedDofs(truss)
     clean_rigid_matrix = computeCleanGlobalRigid(global_rigid_matrix, restricted_dofs)
-    displacement_matrix = computeLoadMatrix(truss, clean_rigid_matrix, restricted_dofs)
+    displacement_matrix, iterations = computeLoadMatrix(truss, clean_rigid_matrix, restricted_dofs, method, int(iterations))
     res = Matrix.s_multiply(global_rigid_matrix,displacement_matrix)
     # res.console()
     # displacement_matrix.console()
@@ -214,7 +225,9 @@ def main(argv):
 
     output = FileOut(outputfile, truss, Matrix.toArray(displacement_matrix), reaction_forces, vector_names, stresses, strains)
     output.writeOutputFile()
-    
+    print('Number of iterations: {0}'. format(iterations))
+    print('')
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])
