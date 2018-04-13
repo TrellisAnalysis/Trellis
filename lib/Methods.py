@@ -53,17 +53,17 @@ def GaussSeidel(it, tolerance, a, f):
             try_vector.data[k][0] = try_vector2.data[k][0]
     return try_vector2, error, iterations
 
-it = 600
-tolerance = 0.000000001
-list_a = [[3, -1, 0, 0],
-          [-1, 3, 0, -2],
-          [0, 0, 3, 1],
-          [0, -2, 1, 3]]
-a = Matrix.arrayToMatrix(list_a)
-a = Matrix.s_multiply(a, 1/2*10e-5)
-list_f = [[0],[0], [0], [-1000]]
-f = Matrix.arrayToMatrix(list_f) 
-m, error, iterations = GaussSeidel(it, tolerance, a, f)
-print(error)
-m.console()
-print(iterations)
+# it = 600
+# tolerance = 0.000000001
+# list_a = [[3, -1, 0, 0],
+#           [-1, 3, 0, -2],
+#           [0, 0, 3, 1],
+#           [0, -2, 1, 3]]
+# a = Matrix.arrayToMatrix(list_a)
+# a = Matrix.s_multiply(a, 1/2*10e-5)
+# list_f = [[0],[0], [0], [-1000]]
+# f = Matrix.arrayToMatrix(list_f) 
+# m, error, iterations = GaussSeidel(it, tolerance, a, f)
+# print(error)
+# m.console()
+# print(iterations)
