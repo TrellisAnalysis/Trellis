@@ -6,6 +6,10 @@ from File import FileIn, FileOut
 from Element import Element
 from Methods import Jacobi
 
+
+def round2(x):
+    return round(x,3)
+
 def distance(ax, ay, bx, by):
     return (math.sqrt(pow(bx - ax, 2) + pow(by - ay, 2)))
 
@@ -83,39 +87,35 @@ def computeCleanGlobalRigid(global_rigid_matrix, restricted_dofs):
 
 def computeLoadMatrix(truss, clean_rigid_matrix, restricted_dofs):
     nodes = len(truss.coordinates)
-    loadsr = [0] * 2 * nodes
+    global_load_vector = [0] * 2 * nodes
     for i in range(len(truss.loads)):
         first = truss.loads[i][0]
         second = truss.loads[i][1]
         r = first*2
         if (second == 1):
             r-=1
-        loadsr[int(r)-1]  = truss.loads[i][2]   
+        global_load_vector[int(r)-1] = truss.loads[i][2]   
 
-    
-    loadsr_finale = []
-    for j in range(len(loadsr)):
+    load_vector = []
+    for j in range(len(global_load_vector)):
         if (j+1) not in restricted_dofs:
-            loadsr_finale.append(loadsr[j])
+            load_vector.append(global_load_vector[j])
     list_loads = []
 
-
-    for k in range(len(loadsr_finale)):
-        list_loads.append([loadsr_finale[k]])
+    for k in range(len(load_vector)):
+        list_loads.append([load_vector[k]])
 
     list_loads = Matrix.arrayToMatrix(list_loads)
-    r, error, iterations = Jacobi(100, 0.0001, clean_rigid_matrix, list_loads)
-
-    l_finale = []
-
-    vv = [0] * nodes * 2
+    result, error, iterations = Jacobi(600, 0.00000001, clean_rigid_matrix, list_loads)
+    
+    displacements_vector = [0] * nodes * 2
     k = 0
-    for l in range (len(vv)):
+    for l in range (len(displacements_vector)):
         if((l+1) not in restricted_dofs):
-            vv[l] = r.data[k][0]
+            displacements_vector[l] = result.data[k][0]
             k+=1
             
-    displacement_matrix = Matrix.listToMatrix(vv, len(vv), 1)
+    displacement_matrix = Matrix.listToMatrix(displacements_vector, len(displacements_vector), 1)
     return displacement_matrix
 
 def computeStressesStrains(list_of_elements, displacement_matrix):
@@ -135,15 +135,45 @@ def computeStressesStrains(list_of_elements, displacement_matrix):
                 current_displacement.append(displacement_matrix.data[j][0])
         current_displacement = Matrix.listToMatrix(current_displacement, len(current_displacement), 1)
         
-        m_result = Matrix.s_multiply(element.transformation_matrix,(1/element.length))
-        m_result = Matrix.s_multiply(m_result,current_displacement)
-        stress = m_result.data[0][0]
+        result_matrix = Matrix.s_multiply(element.transformation_matrix,(1/element.length))
+        result_matrix = Matrix.s_multiply(result_matrix,current_displacement)
+        stress = result_matrix.data[0][0]
         strain = stress * element.e
         list_strain.append(strain)
         list_stress.append(stress)
     return list_stress, list_strain
 
-# def computeReactionForces(clean_rigid_matrix, displacement_matrix):
+def computeReactionForces(m_global, displacement_matrix, loads, number_of_nodes):
+    # loads = len(loads)
+    # print(loads)
+    forces_vector = Matrix.s_multiply(m_global, displacement_matrix)
+    reaction_forces = []
+    vector_names = []
+    list_index = []
+    forces_vector.map(round2)
+    # forces_vector.console()
+
+    for j in range (number_of_nodes):
+        string_x = '{0} '.format(j+1) + 'FX' + ' ='
+        string_y = '{0} '.format(j+1) + 'FY' + ' ='
+        vector_names.append(string_x)
+        vector_names.append(string_y)
+    vector_names_finale = [] # desculpa borba :(
+    for i in range(len(loads)):
+        first = loads[i][0]
+        second = loads[i][1]
+        r = first*2
+        if (second == 1):
+            r-=1
+        r -=1
+        list_index.append(int(r))
+
+    for k in range(forces_vector.rows):
+        if (k not in list_index) and (forces_vector.data[k][0] != 0):
+            vector_names_finale.append(vector_names[k])
+            reaction_forces.append(forces_vector.data[k][0])
+    return reaction_forces, vector_names_finale
+    
         
 
 
@@ -179,11 +209,10 @@ def main(argv):
     res = Matrix.s_multiply(global_rigid_matrix,displacement_matrix)
     # res.console()
     # displacement_matrix.console()
-    # reaction_forces = computeReactionForces()
-    reaction_forces = 0
+    reaction_forces, vector_names = computeReactionForces(global_rigid_matrix, displacement_matrix, truss.loads, len(truss.coordinates))
     stresses, strains = computeStressesStrains(list_of_elements, displacement_matrix)
 
-    output = FileOut(outputfile, truss, Matrix.toArray(displacement_matrix), reaction_forces, stresses, strains)
+    output = FileOut(outputfile, truss, Matrix.toArray(displacement_matrix), reaction_forces, vector_names, stresses, strains)
     output.writeOutputFile()
     
 
