@@ -107,9 +107,9 @@ def computeLoadMatrix(truss, clean_rigid_matrix, restricted_dofs, method, max_it
 
     list_loads = Matrix.arrayToMatrix(list_loads)
     if(method != 'Gauss-Seidel'):
-        result, error, iterations = Jacobi(max_iterations, 0.00000001, clean_rigid_matrix, list_loads)
+        result, error, iterations = Jacobi(max_iterations, 0.0000000001, clean_rigid_matrix, list_loads)
     else:
-        result, error, iterations = GaussSeidel(max_iterations, 0.00000001, clean_rigid_matrix, list_loads)
+        result, error, iterations = GaussSeidel(max_iterations, 0.0000000001, clean_rigid_matrix, list_loads)
     
     displacements_vector = [0] * nodes * 2
     k = 0

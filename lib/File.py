@@ -64,11 +64,14 @@ class FileOut:
     
     def writeOutputFile(self):
         file = open(self.file_name, "w")
-
-        number_of_nodes = len(self.truss.incidences)
+        
+        number_of_elements = len(self.truss.incidences)
+        number_of_nodes= len(self.truss.coordinates)
 
         file.write("*DISPLACEMENTS\n")
         k = 0
+        # print("INCIDENCIAS",len(self.truss.incidences))
+        # print("NOS",len(self.truss.coordinates))
         for node in range(number_of_nodes):
             file.write("{0} {1} {2} {3}\n".format(node + 1, self.displacements[k], self.displacements[k + 1], 0))
             k+=2
@@ -80,9 +83,9 @@ class FileOut:
         #     file.write("{0} {1}\n".format(node + 1, self.reaction_forces))
         
         file.write("\n*ELEMENT_STRAINS\n")
-        for node in range(number_of_nodes):
+        for node in range(number_of_elements):
             file.write("{0} {1}\n".format(node + 1, self.element_strains[node]))
 
         file.write("\n*ELEMENT_STRESSES\n")
-        for node in range(number_of_nodes):
+        for node in range(number_of_elements):
             file.write("{0} {1}\n".format(node + 1, self.element_stresses[node]))
