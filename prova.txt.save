@@ -1,0 +1,13 @@
+
+    if (n == 0 || m == 0){
+        length[n][m] = 0;
+    }
+    if (a[n-1] == b[m-1]){
+        length[n][m] = length[n-1][m-1] + 1;
+    }
+    if (length[n-1][m] > length[n][m-1]){
+        length[n][m] = length[n-1][m];
+    }
+    else{
+        length[n][m] = length[n][n-1];
+    }
