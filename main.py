@@ -7,6 +7,7 @@ from Element import Element
 from Methods import Jacobi, GaussSeidel
 
 
+
 def round2(x):
     return round(x,3)
 
@@ -31,8 +32,8 @@ def load_truss(inputfile):
         length = distance(ax, ay, bx, by)
         e = truss.materials[i][0]
         area = truss.geometric_properties[i][0]
-        cos = math.fabs(bx - ax) / length
-        sin = math.fabs(by - ay) / length
+        cos = (bx - ax) / length
+        sin = (by - ay) / length
         restrictions_dof = []
         for j in range(len(truss.bc_nodes)):
             if(truss.bc_nodes[j][0] in incidence):
@@ -59,7 +60,11 @@ def computeGlobalRigid(truss, list_of_elements):
             for k in range(element.rigid.cols):
                 global_rigid_matrix.data[dof[j]-1][dof[k]-1] += element.rigid.data[j][k]
     # res = Matrix.s_multiply(global_rigid_matrix,)
-
+    # for i in range(len(list_of_elements)):
+        # print("elemento: {0}".format(i + 1))
+        # print("Sin: {0}".format(list_of_elements[i].sin))
+        # print("Cos: {0}".format(list_of_elements[i].cos))
+        # list_of_elements[i].rigid.console()
     return global_rigid_matrix
 
 def computeRestrictedDofs(truss):
@@ -106,7 +111,6 @@ def computeLoadMatrix(truss, clean_rigid_matrix, restricted_dofs, method, max_it
         list_loads.append([load_vector[k]])
 
     list_loads = Matrix.arrayToMatrix(list_loads)
-    # clean_rigid_matrix.console()
     if(method != 'Gauss-Seidel'):
         result, error, iterations = Jacobi(max_iterations, 0.0000000001, clean_rigid_matrix, list_loads)
     else:
@@ -150,11 +154,16 @@ def computeStressesStrains(list_of_elements, displacement_matrix):
 def computeReactionForces(m_global, displacement_matrix, loads, number_of_nodes):
     # loads = len(loads)
     # print(loads)
+    # forces_vector = np.dot(m_global.data, displacement_matrix.data)
+    # print(forces_vector)
+    # print(" ")
     forces_vector = Matrix.s_multiply(m_global, displacement_matrix)
+    forces_vector.console()
     reaction_forces = []
     vector_names = []
     list_index = []
     forces_vector.map(round2)
+   
     # forces_vector.console()
 
     for j in range (number_of_nodes):
