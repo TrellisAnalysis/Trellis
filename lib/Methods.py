@@ -28,6 +28,7 @@ def Jacobi(it, tolerance, a, f):
 def GaussSeidel(it, tolerance, a, f):
     try_vector = Matrix(f.rows, 1)
     try_vector2 = Matrix(f.rows, 1)
+    # a.console()
     for iterations in range(it):
         tol_flag = 0
         for i in range (try_vector.rows):

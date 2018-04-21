@@ -106,6 +106,7 @@ def computeLoadMatrix(truss, clean_rigid_matrix, restricted_dofs, method, max_it
         list_loads.append([load_vector[k]])
 
     list_loads = Matrix.arrayToMatrix(list_loads)
+    # clean_rigid_matrix.console()
     if(method != 'Gauss-Seidel'):
         result, error, iterations = Jacobi(max_iterations, 0.0000000001, clean_rigid_matrix, list_loads)
     else:

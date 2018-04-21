@@ -84,7 +84,7 @@ class FileOut:
         
         file.write("\n*ELEMENT_STRAINS\n")
         for node in range(number_of_elements):
-            file.write("{0} {1}\n".format(node + 1, round(self.element_strains[node], 5)))
+            file.write("{0} {1}\n".format(node + 1, round(self.element_strains[node], 7)))
 
         file.write("\n*ELEMENT_STRESSES\n")
         for node in range(number_of_elements):
