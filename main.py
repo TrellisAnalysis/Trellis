@@ -221,12 +221,10 @@ def main(argv):
     # displacement_matrix.console()
     reaction_forces, vector_names = computeReactionForces(global_rigid_matrix, displacement_matrix, truss.loads, len(truss.coordinates))
     stresses, strains = computeStressesStrains(list_of_elements, displacement_matrix)
-
     output = FileOut(outputfile, truss, Matrix.toArray(displacement_matrix), reaction_forces, vector_names, stresses, strains)
     output.writeOutputFile()
     print('Number of iterations: {0}'. format(iterations + 1))
     print('')
-
-
+    
 if __name__ == "__main__":
     main(sys.argv[1:])
